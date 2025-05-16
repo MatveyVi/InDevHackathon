@@ -4,6 +4,7 @@ import { HeroUIProvider } from "@heroui/react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Auth } from "./pages/auth";
 import "./index.css";
+import Booking from "./pages/Booking/booking.jsx";
 
 
 const router = createBrowserRouter([
@@ -11,7 +12,14 @@ const router = createBrowserRouter([
         path: "/auth",
         element: <Auth />,
     },
+    {
+        path: "/booking",
+        element: <Booking />,
+    },
+
 ]);
+
+
 
 const container = document.getElementById("root");
 
