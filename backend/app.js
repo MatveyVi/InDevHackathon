@@ -7,6 +7,7 @@ const logger = require('morgan');
 const mongoose = require('mongoose')
 const cors = require('cors')
 const userRouter = require('./routes/user-router')
+const roomRouter = require('./routes/room-router')
 
 
 const app = express();
@@ -24,7 +25,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use('/api', userRouter);
+app.use('/user', userRouter);
+app.use('/hotel', roomRouter)
 
 
 // catch 404 and forward to error handler
