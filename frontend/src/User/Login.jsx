@@ -28,8 +28,6 @@ export const Login = ({ setSelected }) => {
             await login(data.phone, data.password)
             console.log('logined')
             navigate('/booking')
-            const rooms = await getAvailableRooms('2025-05-16T10:00:00', '2025-05-16T12:00:00')
-            console.log(rooms)
         } catch (error) {
             alert('Неверные данные')
         }
