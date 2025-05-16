@@ -2,6 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Button, Link } from '@heroui/react';
 import {Input} from "../Components/Input/Input.jsx";
+import { register } from '../api/auth-api.js';
 
 export const Register = ({ setSelected }) => {
     const {
@@ -18,11 +19,20 @@ export const Register = ({ setSelected }) => {
         }
     });
 
-
+    const onSubmit = async (data) => {
+        try {
+          await register(data.phone, data.name, data.password);
+          console.log('register')
+          setSelected('login');
+          alert('Регистрация прошла успешно, войдите в аккаунт');
+        } catch (error) {
+          alert(error.response?.data?.error || 'Ошибка регистрации');
+        }
+      };
 
 
     return (
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
 
             <Input
                 control={control}
@@ -33,9 +43,9 @@ export const Register = ({ setSelected }) => {
             />
             <Input
                 control={control}
-                name="email"
-                label="Email"
-                type="email"
+                name="phone"
+                label="Телефон"
+                type="text"
                 required="Обязательное поле"
             />
             <Input
