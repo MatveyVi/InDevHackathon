@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose')
+const { Schema, model } = require('mongoose');
 
 const RoomSchema = new Schema({
   isDoorOpen: {
@@ -10,6 +10,10 @@ const RoomSchema = new Schema({
     default: false,
   },
   temperature: {
+    type: Number,
+    required: true,
+  },
+  humidity: {
     type: Number,
     required: true,
   },

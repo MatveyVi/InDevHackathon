@@ -58,7 +58,7 @@ class UserController {
                 token
             })
         } catch (error) {
-            handleServerError(res, error, 'login')
+            handleServerError(res, error, 'login')  
         }
     }
 }
