@@ -1,6 +1,15 @@
 const { Schema, model } = require('mongoose');
 
 const RoomSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  type: {
+    type: String,
+    enum: ['Эконом', 'Стандарт', 'Люкс'],
+    required: true,
+  },
   isDoorOpen: {
     type: Boolean,
     default: false,
