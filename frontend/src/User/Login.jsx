@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button, Link } from '@heroui/react';
-import { useNavigate } from 'react-router-dom';
+import { redirect, useNavigate } from 'react-router-dom';
 import {Input} from "../Components/Input/Input.jsx";
+import { login } from '../api/auth-api.js';
+import { getAvailableRooms } from '../api/hotel-api.js';
 
 
 
@@ -19,17 +21,29 @@ export const Login = ({ setSelected }) => {
             password: '',
         }
     });
+    const navigate = useNavigate()
 
+    const onSubmit = async (data) => {
+        try {
+            await login(data.phone, data.password)
+            console.log('logined')
+            navigate('/booking')
+            const rooms = await getAvailableRooms('2025-05-16T10:00:00', '2025-05-16T12:00:00')
+            console.log(rooms)
+        } catch (error) {
+            alert('Неверные данные')
+        }
+    }
 
 
 
     return (
-        <form className="flex flex-col gap-4" >
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
             <Input
                 control={control}
-                name="email"
-                label="Email"
-                type="email"
+                name="phone"
+                label="Телефон"
+                type="text"
                 required="Обязательное поле"
             />
             <Input
