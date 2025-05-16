@@ -10,13 +10,9 @@ const RoomSchema = new Schema({
     enum: ['Эконом', 'Стандарт', 'Люкс'],
     required: true,
   },
-  isDoorOpen: {
-    type: Boolean,
-    default: false,
-  },
-  isOccupied: {
-    type: Boolean,
-    default: false,
+  price: {
+    type: Number,
+    required: true,
   },
   temperature: {
     type: Number,
@@ -25,6 +21,18 @@ const RoomSchema = new Schema({
   humidity: {
     type: Number,
     required: true,
+  },
+  isDoorOpen: {
+    type: Boolean,
+    default: false,
+  },
+  isOccupied: {
+    type: Boolean,
+    default: false,
+  },
+  image: {
+    type: String,
+    default: '',
   },
 }, {
   timestamps: true,
