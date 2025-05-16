@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Card, CardHeader, Divider,} from "@heroui/react";
 
-function RoomsCard({name, status, temp, humidity}) {
+function RoomsCard({name, type}) {
 
     return (
         <Card fullWidth radius='md'
@@ -10,15 +10,13 @@ function RoomsCard({name, status, temp, humidity}) {
                 <div className='flex flex-col w-1/4 text-sky-950 '>
 
                     <div className='mr-8 '>
-                        <p className='text-xl '>Номер: {name}</p>
+                        <p className='text-xl '> {name}</p>
                     </div>
 
                     <div className='text-xl'>
-                        <p>Температура: {temp}</p>
+                        <p>Тип: {type}</p>
                     </div>
-                    <div className='text-xl'>
-                        <p>Влажность: {humidity}</p>
-                    </div>
+
 
 
                 </div>
