@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import RoomsCard from '../../Components/Card/RoomsCard.jsx';
 import { getAvailableRooms } from '../../api/hotel-api.js';
 
-function Booking({ name,  type }) {
+function Booking({ name,  type, price, image }) {
     const [rooms, setRooms] = useState([]);
 
     useEffect(() => {
