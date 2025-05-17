@@ -19,7 +19,7 @@ const router = createBrowserRouter([
         element: <Booking />,
     },
     {
-        path: "/landing",
+        path: "/",
         element: <Landing />,
     },
     {
