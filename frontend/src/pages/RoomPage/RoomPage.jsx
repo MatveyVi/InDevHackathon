@@ -13,6 +13,10 @@ import { ProtectedRoute } from '../../components/ProtectedRoute'
 import { ControlAPI } from '../../api/control-api'
 
 function RoomPage() {
+    const [curtainOpen, setCurtainOpen] = useState(false);
+    const [bathActive, setBathActive] = useState(false);
+
+
     const [doorOpen, setDoorOpen] = useState(false)
     const [lightOn, setLightOn] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -22,15 +26,15 @@ function RoomPage() {
     const handleDoorClick = async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
+
         if (loading) return;
-        
+
         try {
             setLoading(true);
             // Update UI state immediately
             const newDoorState = !doorOpen;
             setDoorOpen(newDoorState);
-            
+
             // Fire and forget the API call
             await ControlAPI.toggleDoor(newDoorState);
         } catch (error) {
@@ -43,15 +47,15 @@ function RoomPage() {
     const handleLightClick = async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
+
         if (loading) return;
-        
+
         try {
             setLoading(true);
             // Update UI state immediately
             const newLightState = !lightOn;
             setLightOn(newLightState);
-            
+
             // Fire and forget the API call
             await ControlAPI.toggleLight(newLightState);
         } catch (error) {
@@ -127,7 +131,8 @@ function RoomPage() {
                 </div>
 
                 {/* Controls */}
-                <div className="px-4 pb-6 pt-2 flex justify-between">
+                <div className="px-4 pb-6 pt-2 grid grid-cols-2 gap-4">
+
                     {/* Door Control */}
                     <div className="flex flex-col items-center">
                         <button
@@ -136,13 +141,9 @@ function RoomPage() {
                             disabled={loading}
                             className={`${
                                 doorOpen ? 'bg-red-600' : 'bg-blue-900'
-                            } text-white font-semibold flex items-center gap-1 px-4 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
+                            } text-white font-semibold flex items-center gap-1 px-4 py-2 w-full rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
                         >
-                            {doorOpen ? (
-                                <LockOpenIcon className="w-5 h-5" />
-                            ) : (
-                                <LockClosedIcon className="w-5 h-5" />
-                            )}
+                            {doorOpen ? <LockOpenIcon className="w-5 h-5" /> : <LockClosedIcon className="w-5 h-5" />}
                             <span>{doorOpen ? 'Закрыть' : 'Открыть'}</span>
                         </button>
                         <span className="mt-2 text-sm text-white">Двери</span>
@@ -156,14 +157,47 @@ function RoomPage() {
                             disabled={loading}
                             className={`${
                                 lightOn ? 'bg-yellow-500' : 'bg-blue-900'
-                            } text-white font-semibold flex items-center gap-1 px-4 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
+                            } text-white font-semibold flex items-center gap-1 px-4 py-2 w-full rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
                         >
                             <LightBulbIcon className="w-5 h-5" />
                             <span>{lightOn ? 'Выключить' : 'Включить'}</span>
                         </button>
                         <span className="mt-2 text-sm text-white">Свет</span>
                     </div>
+
+                    {/* Curtain Control (только визуальный эффект) */}
+                    <div className="flex flex-col items-center">
+                        <button
+                            type="button"
+                            onClick={() => setCurtainOpen(!curtainOpen)}
+                            className={`${
+                                curtainOpen ? 'bg-green-600' : 'bg-blue-900'
+                            } text-white font-semibold flex items-center gap-1 px-4 py-2 w-full rounded-xl transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
+                        >
+                            <span className="w-5 h-5">{curtainOpen ? '🪟' : '🪟'}</span>
+                            <span>{curtainOpen ? 'Закрыть' : 'Открыть'}</span>
+                        </button>
+                        <span className="mt-2 text-sm text-white">Шторы</span>
+                    </div>
+
+                    {/* Bath Control (только визуальный эффект) */}
+                    <div className="flex flex-col items-center">
+                        <button
+                            type="button"
+                            onClick={() => setBathActive(!bathActive)}
+                            className={`${
+                                bathActive ? 'bg-purple-600' : 'bg-blue-900'
+                            } text-white font-semibold flex items-center gap-1 px-4 py-2 w-full rounded-xl transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
+                        >
+                            <span className="w-5 h-5">{bathActive ? '🛁' : '🚿'}</span>
+                            <span>{bathActive ? 'Выключить' : 'Включить'}</span>
+                        </button>
+                        <span className="mt-2 text-sm text-white">Ванна</span>
+                    </div>
+
                 </div>
+
+
 
                 {/* Error Message */}
                 {error && (
