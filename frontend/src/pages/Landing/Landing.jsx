@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Dialog, DialogPanel } from '@headlessui/react';
 import {
     CalendarDaysIcon,
     UserIcon,
-    ArrowRightIcon
+    ArrowRightIcon,
+    HomeIcon
 } from '@heroicons/react/24/outline';
 import {
     ChevronDownIcon,
@@ -14,8 +15,14 @@ import { useNavigate } from 'react-router-dom';
 
 function HomePage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const hotels = ['Гранд Отель', 'Парк Сити', 'Океан Резиденс'];
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        setIsAuthenticated(!!token);
+    }, []);
 
     const newsList = [
         {
@@ -37,16 +44,28 @@ function HomePage() {
 
     return (
         <div className="min-h-screen bg-sky-950 text-white px-4 py-6 w-full max-w-md mx-auto">
-
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold">Умный Отель</h1>
-                <Button className="bg-white text-sky-950 font-semibold px-4 py-2 rounded-lg flex items-center gap-2" onClick={() => navigate('/auth')}>
-                    <ArrowRightIcon className="w-4 h-4" />
-                    Войти
-                </Button>
+                {isAuthenticated ? (
+                    <Button 
+                        className="bg-white text-sky-950 font-semibold px-4 py-2 rounded-lg flex items-center gap-2" 
+                        onClick={() => navigate('/room')}
+                    >
+                        <HomeIcon className="w-4 h-4" />
+                        Моя комната
+                    </Button>
+                ) : (
+                    <Button 
+                        className="bg-white text-sky-950 font-semibold px-4 py-2 rounded-lg flex items-center gap-2" 
+                        onClick={() => navigate('/auth')}
+                    >
+                        <ArrowRightIcon className="w-4 h-4" />
+                        Войти
+                    </Button>
+                )}
             </div>
-
+            
             {/* Promo Section */}
             <div className="bg-white/10 p-6 rounded-xl mb-6 text-center">
                 <h2 className="text-xl font-semibold mb-2">Добро пожаловать!</h2>

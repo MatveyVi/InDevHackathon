@@ -5,6 +5,9 @@ import { Dialog } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@heroui/react';
+import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 
 function Booking() {
     const [rooms, setRooms] = useState([]);
@@ -14,6 +17,7 @@ function Booking() {
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const navigate = useNavigate()
 
     const hotels = ['Гранд Отель', 'Парк Сити', 'Океан Резиденс'];
 
@@ -52,6 +56,15 @@ function Booking() {
         <div className="w-full min-h-screen flex justify-center bg-sky-50">
             <div className="w-[390px] px-4 pb-10 flex flex-col items-center">
                 {/* Header + Button */}
+                {/* Back Button */}
+                <div className="absolute top-6 left-4 z-50">
+                    <Button
+                        onClick={() => navigate('/')}
+                        className="bg-black/50 backdrop-blur-md text-white p-2 rounded-full hover:bg-black/60 transition-colors"
+                    >
+                        <ArrowLeftIcon className="w-5 h-5" />
+                    </Button>
+                </div>
                 <div className="w-full flex flex-col items-center mt-4 mb-5 space-y-2">
                     <p className="font-bold text-2xl text-sky-950 text-center">Booking</p>
                     <button
