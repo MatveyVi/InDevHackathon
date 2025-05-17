@@ -1,8 +1,7 @@
 import React from 'react';
-import {Button, Card, CardHeader, Divider,} from "@heroui/react";
+import { Button, Card, CardHeader } from "@heroui/react";
 
-function RoomsCard({name, type, price, image}) {
-
+function RoomsCard({ name, type, price, image, onBook }) {
     return (
         <Card
             fullWidth
@@ -29,13 +28,12 @@ function RoomsCard({name, type, price, image}) {
 
                 {/* Правая часть — кнопка */}
                 <div className="flex items-center justify-end w-1/2">
-                    <Button className="bg-white h-11 text-blue-950 font-bold">
+                    <Button onClick={onBook} className="bg-white h-11 text-blue-950 font-bold">
                         Бронь
                     </Button>
                 </div>
             </CardHeader>
         </Card>
-
     );
 }
 
