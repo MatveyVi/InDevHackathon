@@ -1,123 +1,161 @@
 import asyncio
+import sys
+import json
 from bleak import BleakScanner, BleakClient
 from controller_pb2 import IdentifyRequest, ControllerResponse, States, GetState
 
+# Settings
 BLE_DEVICE_NAME = "ROOM_34"
 TOKEN = "GbKZUb0ZU5oTAzun"
 
+# Ensure UTF-8 encoding for stdout and stderr
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stderr.encoding != 'utf-8':
+    sys.stderr.reconfigure(encoding='utf-8')
+
 async def find_device():
-    # print("🔍 [Шаг 1] Начало поиска BLE устройств...")
-    devices = await BleakScanner.discover()
-    for device in devices:
-        if device.name == BLE_DEVICE_NAME:
-            # print(f"✅ [Шаг 1] Устройство найдено: {device.name} ({device.address})")
-            return device.address
-    # print("❌ [Шаг 1] Устройство не найдено")
-    return None
-
-def build_set_state_raw(state_value):
-    return b'\x08' + state_value.to_bytes(1, 'little')
-
-async def send_state_command(client, ff01_char, state_value, action):
-    if client.is_connected:
-        # print(f"💡 [Шаг] Отправка команды {action} (ClientMessage)...")
-        message_bytes = build_set_state_raw(state_value)
-        # print(f"✅ [Шаг] Команда {action} (Raw): {message_bytes.hex()}")
-        await client.write_gatt_char(ff01_char, message_bytes)
+    try:
+        devices = await BleakScanner.discover()
+        for device in devices:
+            if device.name == BLE_DEVICE_NAME:
+                return device.address
+        print(json.dumps({
+            "status": "error",
+            "message": "Device not found in available BLE devices"
+        }))
+        return None
+    except Exception as e:
+        print(json.dumps({
+            "status": "error",
+            "message": f"Error during device discovery: {str(e)}"
+        }))
+        return None
 
 async def handle_notification(sender, data):
-    # print(f"📡 [Уведомление] Длина={len(data)}, Hex={data.hex()}")
-    if data == b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e':
-        # print("✅ [Уведомление] Успешная авторизация или подтверждение")
-        return True
     try:
-        try:
-            # print(f"📋 [Уведомление] Данные как строка: {data.decode('utf-8')}")
-            pass
-        except UnicodeDecodeError:
-            # print(f"📋 [Уведомление] Данные не строка, сырые байты: {data.hex()}")
-            pass
+        if data == b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e':
+            print(json.dumps({
+                "status": "success",
+                "message": "Authentication confirmed"
+            }))
+            return True
 
         response = ControllerResponse()
         response.ParseFromString(data)
-        # print(f"{response}")
+        
         if response.HasField('status'):
-            # print(f"✅ [Уведомление] Статус: {response.status}")
-            return response.status == response.Statuses.Ok
-        elif response.HasField('state'):
-            state = response.state
-            # print(f"✅ [Уведомление] Состояние: Свет={state.light_on}, Дверь={state.door_lock}, "
-            #       f"Канал 1={state.channel_1}, Канал 2={state.channel_2}, "
-            #       f"Температура={state.temperature}, Давление={state.pressure}, "
-            #       f"Влажность={state.humidity}")
-            return True
-        elif response.HasField('info'):
-            info = response.info
-            # print(f"✅ [Уведомление] Информация: IP={info.ip}, MAC={info.mac}, BLE Name={info.ble_name}, Token={info.token}")
-            return True
-        else:
-            # print("⚠️ [Уведомление] Ответ не содержит ожидаемых полей ControllerResponse")
-            pass
+            success = response.status == response.Statuses.Ok
+            print(json.dumps({
+                "status": "success" if success else "error",
+                "message": f"Command {'succeeded' if success else 'failed'}"
+            }))
+            return success
+        
+        return False
     except Exception as e:
-        # print(f"❌ [Уведомление] Ошибка десериализации: {e}")
-        pass
-    return False
+        print(json.dumps({
+            "status": "error",
+            "message": f"Error handling notification: {str(e)}"
+        }))
+        return False
 
-async def get_state(client, ff01_char):
-    if client.is_connected:
-        # print("🔄 [Шаг] Отправка команды для получения состояния устройства...")
-        get_state_message = GetState()
-        message_bytes = get_state_message.SerializeToString()
-        # print(f"✅ [Шаг] Команда получения состояния: {message_bytes.hex()}")
-        await client.write_gatt_char(ff01_char, message_bytes)
-        await asyncio.sleep(2)
-        # print("📡 [Шаг] Ожидание ответа от устройства...")
-        await asyncio.sleep(2)
+async def send_command(client, characteristic, state_value, operation):
+    try:
+        set_state_bytes = b'\x08' + state_value.to_bytes(1, 'little')
+        await client.write_gatt_char(characteristic, set_state_bytes)
+        # Wait for command to be processed
+        await asyncio.sleep(0.5)
+        print(json.dumps({
+            "status": "success",
+            "message": f"Light {operation} command sent successfully"
+        }))
+        return True
+    except Exception as e:
+        print(json.dumps({
+            "status": "error",
+            "message": f"Failed to send {operation} command: {str(e)}"
+        }))
+        return False
 
-async def connect_and_interact(address):
-    if not address:
-        return
-    
-    async with BleakClient(address) as client:
-        # print(f"📶 [Шаг 2] Подключено к {BLE_DEVICE_NAME}!")
-        ff02_char = None
-        ff01_char = None
-        for service in client.services:
-            for char in service.characteristics:
-                if char.uuid == "0000ff02-0000-1000-8000-00805f9b34fb":
-                    ff02_char = char
-                elif char.uuid == "0000ff01-0000-1000-8000-00805f9b34fb":
-                    ff01_char = char
+async def connect_and_control(address):
+    client = None
+    try:
+        if not address:
+            return False
 
-        if not ff02_char or not ff01_char:
-            # print("❌ [Шаг 3] Характеристики не найдены!")
-            return
-
+        client = BleakClient(address)
+        await client.connect()
+        
         if not client.is_connected:
-            # print("❌ [Шаг 4] Клиент не подключен!")
-            return
+            print(json.dumps({
+                "status": "error",
+                "message": "Failed to connect to device"
+            }))
+            return False
 
+        # Get characteristics
+        ff01_char = "0000ff01-0000-1000-8000-00805f9b34fb"
+        ff02_char = "0000ff02-0000-1000-8000-00805f9b34fb"
+
+        # Send authentication
         identify_request = IdentifyRequest()
         identify_request.Token = TOKEN
         await client.write_gatt_char(ff02_char, identify_request.SerializeToString())
-        # print("✅ [Шаг 4] Токен отправлен в ff02")
+        await asyncio.sleep(0.5)
 
+        # Subscribe to notifications
         await client.start_notify(ff01_char, handle_notification)
-        # print("✅ [Шаг 5] Подписка на уведомления ff01 активирована")
+        await asyncio.sleep(0.5)
 
-        await send_state_command(client, ff01_char, States.LightOff, 'выключение света')
+        # Send light off command
+        success = await send_command(client, ff01_char, States.LightOff, "off")
+        
+        # Wait for command completion
+        await asyncio.sleep(1.0)
 
-        # await get_state(client, ff01_char)
-
+        # Cleanup
         await client.stop_notify(ff01_char)
-        # print("✅ [Шаг 12] Подписка на уведомления ff01 отключена")
+        return success
+
+    except Exception as e:
+        print(json.dumps({
+            "status": "error",
+            "message": f"Connection error: {str(e)}"
+        }))
+        return False
+    finally:
+        if client and client.is_connected:
+            try:
+                await client.disconnect()
+            except Exception:
+                pass
 
 async def main():
-    # print("🚀 [Шаг 0] Запуск программы...")
-    device_address = await find_device()
-    if device_address:
-        await connect_and_interact(device_address)
-    # print("🏁 [Шаг 13] Программа завершена")
+    try:
+        device_address = await find_device()
+        if device_address:
+            success = await connect_and_control(device_address)
+            if success:
+                print(json.dumps({
+                    "status": "success",
+                    "message": "Light turned off successfully"
+                }))
+            else:
+                print(json.dumps({
+                    "status": "error",
+                    "message": "Failed to turn off light"
+                }))
+        else:
+            print(json.dumps({
+                "status": "error",
+                "message": "No compatible device found"
+            }))
+    except Exception as e:
+        print(json.dumps({
+            "status": "error",
+            "message": f"Operation failed: {str(e)}"
+        }))
 
 if __name__ == "__main__":
     asyncio.run(main())

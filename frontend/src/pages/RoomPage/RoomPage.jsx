@@ -10,14 +10,56 @@ import { Menu } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { useNavigate } from 'react-router-dom'
 import { ProtectedRoute } from '../../components/ProtectedRoute'
+import { ControlAPI } from '../../api/control-api'
 
 function RoomPage() {
     const [doorOpen, setDoorOpen] = useState(false)
     const [lightOn, setLightOn] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
     const navigate = useNavigate()
 
-    const toggleDoor = () => setDoorOpen(prev => !prev)
-    const toggleLight = () => setLightOn(prev => !prev)
+    const handleDoorClick = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (loading) return;
+        
+        try {
+            setLoading(true);
+            // Update UI state immediately
+            const newDoorState = !doorOpen;
+            setDoorOpen(newDoorState);
+            
+            // Fire and forget the API call
+            await ControlAPI.toggleDoor(newDoorState);
+        } catch (error) {
+            console.error('Failed to toggle door:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleLightClick = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (loading) return;
+        
+        try {
+            setLoading(true);
+            // Update UI state immediately
+            const newLightState = !lightOn;
+            setLightOn(newLightState);
+            
+            // Fire and forget the API call
+            await ControlAPI.toggleLight(newLightState);
+        } catch (error) {
+            console.error('Failed to toggle light:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <ProtectedRoute>
@@ -88,34 +130,49 @@ function RoomPage() {
                 <div className="px-4 pb-6 pt-2 flex justify-between">
                     {/* Door Control */}
                     <div className="flex flex-col items-center">
-                        <Button
-                            onClick={toggleDoor}
-                            className={`${doorOpen ? 'bg-red-600' : 'bg-blue-900'
-                                } text-white font-semibold flex items-center gap-1 px-4 py-2 rounded-xl`}
+                        <button
+                            type="button"
+                            onClick={handleDoorClick}
+                            disabled={loading}
+                            className={`${
+                                doorOpen ? 'bg-red-600' : 'bg-blue-900'
+                            } text-white font-semibold flex items-center gap-1 px-4 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
                         >
                             {doorOpen ? (
                                 <LockOpenIcon className="w-5 h-5" />
                             ) : (
                                 <LockClosedIcon className="w-5 h-5" />
                             )}
-                            {doorOpen ? 'Закрыть' : 'Открыть'}
-                        </Button>
+                            <span>{doorOpen ? 'Закрыть' : 'Открыть'}</span>
+                        </button>
                         <span className="mt-2 text-sm text-white">Двери</span>
                     </div>
 
                     {/* Light Control */}
                     <div className="flex flex-col items-center">
-                        <Button
-                            onClick={toggleLight}
-                            className={`${lightOn ? 'bg-yellow-400 text-black' : 'bg-green-600 text-white'
-                                } font-semibold flex items-center gap-1 px-4 py-2 rounded-xl`}
+                        <button
+                            type="button"
+                            onClick={handleLightClick}
+                            disabled={loading}
+                            className={`${
+                                lightOn ? 'bg-yellow-500' : 'bg-blue-900'
+                            } text-white font-semibold flex items-center gap-1 px-4 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
                         >
                             <LightBulbIcon className="w-5 h-5" />
-                            {lightOn ? 'Включено' : 'Выключено'}
-                        </Button>
+                            <span>{lightOn ? 'Выключить' : 'Включить'}</span>
+                        </button>
                         <span className="mt-2 text-sm text-white">Свет</span>
                     </div>
                 </div>
+
+                {/* Error Message */}
+                {error && (
+                    <div className="px-4 mt-4">
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+                            {error}
+                        </div>
+                    </div>
+                )}
 
                 {/* Dropdown меню */}
                 <div className="px-4 mt-4 mb-10">

@@ -9,6 +9,7 @@ const cors = require('cors')
 const userRouter = require('./routes/user-router')
 const roomRouter = require('./routes/room-router')
 const adminRouter = require('./routes/admin-router')
+const roomControlRouter = require('./routes/room-control-router')
 
 const app = express();
 mongoose
@@ -30,6 +31,7 @@ app.use(cookieParser());
 app.use('/admin', adminRouter);
 app.use('/user', userRouter);
 app.use('/hotel', roomRouter);
+app.use('/room-control', roomControlRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
