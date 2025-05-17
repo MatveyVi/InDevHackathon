@@ -7,6 +7,7 @@ import "./index.css";
 import Booking from "./pages/Booking/booking.jsx";
 import Landing from "./pages/Landing/Landing.jsx";
 import RoomPage from "./pages/RoomPage/RoomPage.jsx";
+import Admin from "./pages/Admin/index.jsx";
 
 
 const router = createBrowserRouter([
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
         path: "/room",
         element: <RoomPage />,
     },
+    {
+        path: '/admin',
+        element: <Admin />
+    }
 
 
 

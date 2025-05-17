@@ -8,7 +8,7 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const userRouter = require('./routes/user-router')
 const roomRouter = require('./routes/room-router')
-
+const adminRouter = require('./routes/admin-router')
 
 const app = express();
 mongoose
@@ -21,15 +21,15 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(cors());
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// API routes
+app.use('/admin', adminRouter);
 app.use('/user', userRouter);
-app.use('/hotel', roomRouter)
-
+app.use('/hotel', roomRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
