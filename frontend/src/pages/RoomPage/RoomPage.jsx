@@ -72,7 +72,7 @@ function RoomPage() {
                 <div className="absolute top-6 left-4 z-50">
                     <Button
                         onClick={() => navigate('/')}
-                        className="bg-black/50 backdrop-blur-md text-white p-2 rounded-full hover:bg-black/60 transition-colors"
+                        className="bg-white/80 backdrop-blur-sm text-sky-950 p-2 rounded-full h-1  hover:bg-sky-950/60 transition-colors"
                     >
                         <ArrowLeftIcon className="w-5 h-5" />
                     </Button>
@@ -116,22 +116,22 @@ function RoomPage() {
                     {/* Temperature */}
                     <Card className="w-[110px] h-[90px] text-center text-sm">
                         <CardBody>
-                            <div className="font-semibold">Температура</div>
-                            <div className="text-xs mt-1">+30.3°C</div>
+                            <div className="font-semibold justify-center flex">Температура</div>
+                            <div className="text-xs mt-1 justify-center flex" >+30.3°C</div>
                         </CardBody>
                     </Card>
 
                     {/* Humidity */}
                     <Card className="w-[110px] h-[90px] text-center text-sm">
                         <CardBody>
-                            <div className="font-semibold">Влажность</div>
-                            <div className="text-xs mt-1">89%</div>
+                            <div className="font-semibold justify-center flex">Влажность</div>
+                            <div className="text-xs mt-1  justify-center flex">89%</div>
                         </CardBody>
                     </Card>
                 </div>
 
                 {/* Controls */}
-                <div className="px-4 pb-6 pt-2 grid grid-cols-2 gap-4">
+                <div className="px-4 pb-6 pt-2 grid grid-cols-2 gap-4 ">
 
                     {/* Door Control */}
                     <div className="flex flex-col items-center">
@@ -141,7 +141,7 @@ function RoomPage() {
                             disabled={loading}
                             className={`${
                                 doorOpen ? 'bg-red-600' : 'bg-blue-900'
-                            } text-white font-semibold flex items-center gap-1 px-4 py-2 w-full rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
+                            } text-white justify-center font-semibold flex items-center gap-1 px-4 py-2 w-full rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
                         >
                             {doorOpen ? <LockOpenIcon className="w-5 h-5" /> : <LockClosedIcon className="w-5 h-5" />}
                             <span>{doorOpen ? 'Закрыть' : 'Открыть'}</span>
@@ -157,7 +157,7 @@ function RoomPage() {
                             disabled={loading}
                             className={`${
                                 lightOn ? 'bg-yellow-500' : 'bg-blue-900'
-                            } text-white font-semibold flex items-center gap-1 px-4 py-2 w-full rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
+                            } text-white  justify-center  font-semibold flex items-center gap-1 px-4 py-2 w-full rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
                         >
                             <LightBulbIcon className="w-5 h-5" />
                             <span>{lightOn ? 'Выключить' : 'Включить'}</span>
@@ -172,7 +172,7 @@ function RoomPage() {
                             onClick={() => setCurtainOpen(!curtainOpen)}
                             className={`${
                                 curtainOpen ? 'bg-green-600' : 'bg-blue-900'
-                            } text-white font-semibold flex items-center gap-1 px-4 py-2 w-full rounded-xl transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
+                            } text-white  justify-center font-semibold flex items-center gap-1 px-4 py-2 w-full rounded-xl transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
                         >
                             <span className="w-5 h-5">{curtainOpen ? '🪟' : '🪟'}</span>
                             <span>{curtainOpen ? 'Закрыть' : 'Открыть'}</span>
@@ -187,7 +187,7 @@ function RoomPage() {
                             onClick={() => setBathActive(!bathActive)}
                             className={`${
                                 bathActive ? 'bg-purple-600' : 'bg-blue-900'
-                            } text-white font-semibold flex items-center gap-1 px-4 py-2 w-full rounded-xl transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
+                            } text-white  justify-center  font-semibold flex items-center gap-1 px-4 py-2 w-full rounded-xl transition-colors duration-200 ease-in-out hover:opacity-90 active:transform active:scale-95`}
                         >
                             <span className="w-5 h-5">{bathActive ? '🛁' : '🚿'}</span>
                             <span>{bathActive ? 'Выключить' : 'Включить'}</span>
