@@ -112,6 +112,4 @@ indevhackathon/
    - Создайте issue в репозитории проекта
 
 ### Контактная информация
-- Email: support@indevhackathon.com
-- Telegram: @indevhackathon
-- Discord: [Присоединиться к серверу](https://discord.gg/indevhackathon) 
+- Telegram: @matveyvishn, @ermak_d
